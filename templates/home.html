@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load booking_tags %}
+
+{% block title %}LuxeStay — Premium Hotel Booking{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero" id="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-particles" id="hero-particles"></div>
+    <div class="container hero-content">
+        <p class="hero-subtitle animate-fade-up">✦ Welcome to LuxeStay</p>
+        <h1 class="hero-title animate-fade-up delay-1">Experience<br><span class="text-gold">Luxury</span> Redefined</h1>
+        <p class="hero-text animate-fade-up delay-2">Indulge in world-class hospitality with breathtaking views, exquisite dining, and unparalleled comfort.</p>
+        <div class="hero-actions animate-fade-up delay-3">
+            <a href="{% url 'room_list' %}" class="btn btn-primary btn-lg">Explore Rooms</a>
+            <a href="{% url 'contact' %}" class="btn btn-outline btn-lg">Contact Us</a>
+        </div>
+    </div>
+</section>
+
+<!-- Search Section -->
+<section class="search-section" id="search-section">
+    <div class="container">
+        <form class="search-bar glass-card" action="{% url 'room_list' %}" method="get" id="search-form">
+            <div class="search-field">
+                <label for="search-checkin">Check In</label>
+                {{ search_form.check_in }}
+            </div>
+            <div class="search-field">
+                <label for="search-checkout">Check Out</label>
+                {{ search_form.check_out }}
+            </div>
+            <div class="search-field">
+                <label for="search-guests">Guests</label>
+                {{ search_form.guests }}
+            </div>
+            <div class="search-field">
+                <label for="search-room-type">Room Type</label>
+                {{ search_form.room_type }}
+            </div>
+            <button type="submit" class="btn btn-primary search-btn" id="search-submit">Search</button>
+        </form>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section section" id="features-section">
+    <div class="container">
+        <div class="section-header">
+            <p class="section-tag">Why Choose Us</p>
+            <h2 class="section-title">A <span class="text-gold">World-Class</span> Experience</h2>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card glass-card animate-on-scroll">
+                <div class="feature-icon">🏨</div>
+                <h3>Premium Rooms</h3>
+                <p>Elegantly designed rooms with premium furnishings and breathtaking city views.</p>
+            </div>
+            <div class="feature-card glass-card animate-on-scroll">
+                <div class="feature-icon">🍽️</div>
+                <h3>Fine Dining</h3>
+                <p>Award-winning restaurants offering cuisines from around the world.</p>
+            </div>
+            <div class="feature-card glass-card animate-on-scroll">
+                <div class="feature-icon">💆</div>
+                <h3>Spa & Wellness</h3>
+                <p>Rejuvenate with our luxury spa treatments and wellness programs.</p>
+            </div>
+            <div class="feature-card glass-card animate-on-scroll">
+                <div class="feature-icon">🏊</div>
+                <h3>Infinity Pool</h3>
+                <p>Relax at our stunning rooftop infinity pool with panoramic views.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Rooms Section -->
+{% if featured_rooms %}
+<section class="rooms-section section" id="featured-rooms-section">
+    <div class="container">
+        <div class="section-header">
+            <p class="section-tag">Our Best</p>
+            <h2 class="section-title">Featured <span class="text-gold">Rooms</span></h2>
+        </div>
+        <div class="rooms-grid">
+            {% for room in featured_rooms %}
+            <div class="room-card glass-card animate-on-scroll" id="featured-room-{{ room.id }}">
+                <div class="room-card-image">
+                    {% if room.image %}
+                    <img src="{{ room.image.url }}" alt="{{ room.name }}" loading="lazy">
+                    {% else %}
+                    <div class="room-placeholder">
+                        <span>🏨</span>
+                    </div>
+                    {% endif %}
+                    <span class="room-badge">{{ room.get_room_type_display }}</span>
+                </div>
+                <div class="room-card-body">
+                    <h3 class="room-card-title">{{ room.name }}</h3>
+                    <div class="room-card-meta">
+                        <span>👥 {{ room.capacity }} Guests</span>
+                        <span>📐 {{ room.size_sqft }} sq ft</span>
+                    </div>
+                    <p class="room-card-desc">{{ room.description|truncatewords:20 }}</p>
+                    <div class="room-card-footer">
+                        <div class="room-price">
+                            <span class="price-amount">₹{{ room.price_per_night|floatformat:0 }}</span>
+                            <span class="price-unit">/ night</span>
+                        </div>
+                        <a href="{% url 'room_detail' room.id %}" class="btn btn-sm btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="section-action">
+            <a href="{% url 'room_list' %}" class="btn btn-outline">View All Rooms →</a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Stats Section -->
+<section class="stats-section" id="stats-section">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-item animate-on-scroll">
+                <span class="stat-number" data-target="500">0</span><span class="stat-plus">+</span>
+                <p class="stat-label">Luxury Rooms</p>
+            </div>
+            <div class="stat-item animate-on-scroll">
+                <span class="stat-number" data-target="50000">0</span><span class="stat-plus">+</span>
+                <p class="stat-label">Happy Guests</p>
+            </div>
+            <div class="stat-item animate-on-scroll">
+                <span class="stat-number" data-target="15">0</span><span class="stat-plus">+</span>
+                <p class="stat-label">Years of Excellence</p>
+            </div>
+            <div class="stat-item animate-on-scroll">
+                <span class="stat-number" data-target="98">0</span><span class="stat-plus">%</span>
+                <p class="stat-label">Satisfaction Rate</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section section" id="cta-section">
+    <div class="container">
+        <div class="cta-card glass-card">
+            <h2>Ready to Experience <span class="text-gold">Luxury</span>?</h2>
+            <p>Book your dream stay today and immerse yourself in unparalleled comfort and elegance.</p>
+            <a href="{% url 'room_list' %}" class="btn btn-primary btn-lg">Book Your Stay</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

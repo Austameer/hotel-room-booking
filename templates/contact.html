@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us — LuxeStay{% endblock %}
+{% block meta_desc %}Get in touch with LuxeStay. We're here to help with your reservation and answer any questions.{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header page-header-sm">
+    <div class="container">
+        <h1 class="page-title animate-fade-up">Contact <span class="text-gold">Us</span></h1>
+        <p class="page-subtitle animate-fade-up delay-1">We'd love to hear from you</p>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact-section section" id="contact-section">
+    <div class="container">
+        <div class="contact-grid">
+            <!-- Contact Info -->
+            <div class="contact-info animate-fade-up">
+                <h2>Get in <span class="text-gold">Touch</span></h2>
+                <p>Have questions about your stay? Our team is here to help make your experience unforgettable.</p>
+
+                <div class="contact-cards">
+                    <div class="contact-card glass-card">
+                        <div class="contact-card-icon">📍</div>
+                        <h4>Our Location</h4>
+                        <p>123 Luxury Avenue<br>Bandra West, Mumbai 400050</p>
+                    </div>
+                    <div class="contact-card glass-card">
+                        <div class="contact-card-icon">📞</div>
+                        <h4>Phone</h4>
+                        <p>+91 98765 43210<br>+91 22 1234 5678</p>
+                    </div>
+                    <div class="contact-card glass-card">
+                        <div class="contact-card-icon">✉️</div>
+                        <h4>Email</h4>
+                        <p>reservations@luxestay.com<br>info@luxestay.com</p>
+                    </div>
+                    <div class="contact-card glass-card">
+                        <div class="contact-card-icon">🕐</div>
+                        <h4>Hours</h4>
+                        <p>24/7 Front Desk<br>Concierge: 6 AM – 11 PM</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="contact-form-wrapper animate-fade-up delay-1">
+                <div class="glass-card contact-form-card">
+                    <h3>Send a Message</h3>
+                    <form method="post" action="{% url 'contact' %}" id="contact-form">
+                        {% csrf_token %}
+
+                        <div class="form-group">
+                            <label for="contact-name">Your Name *</label>
+                            {{ form.name }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contact-email">Your Email *</label>
+                            {{ form.email }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contact-subject">Subject *</label>
+                            {{ form.subject }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contact-message">Message *</label>
+                            {{ form.message }}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg btn-block" id="send-message-btn">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

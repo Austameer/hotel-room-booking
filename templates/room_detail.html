@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load booking_tags %}
+
+{% block title %}{{ room.name }} — LuxeStay{% endblock %}
+{% block meta_desc %}{{ room.description|truncatewords:25 }}{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header page-header-sm">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a> / <a href="{% url 'room_list' %}">Rooms</a> / <span>{{ room.name }}</span>
+        </nav>
+    </div>
+</section>
+
+<!-- Room Detail -->
+<section class="room-detail-section section" id="room-detail">
+    <div class="container">
+        <div class="room-detail-grid">
+            <!-- Room Image -->
+            <div class="room-detail-image animate-fade-up">
+                {% if room.image %}
+                <img src="{{ room.image.url }}" alt="{{ room.name }}">
+                {% else %}
+                <div class="room-placeholder room-placeholder-lg">
+                    <span>🏨</span>
+                </div>
+                {% endif %}
+                <span class="room-badge room-badge-lg">{{ room.get_room_type_display }}</span>
+            </div>
+
+            <!-- Room Info -->
+            <div class="room-detail-info animate-fade-up delay-1">
+                <h1 class="room-detail-title">{{ room.name }}</h1>
+
+                <div class="room-detail-meta">
+                    <div class="meta-item">
+                        <span class="meta-icon">👥</span>
+                        <span>Up to {{ room.capacity }} Guests</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-icon">📐</span>
+                        <span>{{ room.size_sqft }} sq ft</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-icon">🏷️</span>
+                        <span>{{ room.get_room_type_display }}</span>
+                    </div>
+                </div>
+
+                <div class="room-detail-price glass-card">
+                    <span class="detail-price-amount">₹{{ room.price_per_night|floatformat:0 }}</span>
+                    <span class="detail-price-unit">per night</span>
+                </div>
+
+                <div class="room-detail-desc">
+                    <h3>About This Room</h3>
+                    <p>{{ room.description }}</p>
+                </div>
+
+                <div class="room-detail-amenities">
+                    <h3>Amenities</h3>
+                    <div class="amenities-grid">
+                        {% for amenity in amenities %}
+                        <span class="amenity-item">✓ {{ amenity }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="room-detail-actions">
+                    <a href="{% url 'book_room' room.id %}" class="btn btn-primary btn-lg" id="book-now-btn">Book This Room</a>
+                    <a href="{% url 'room_list' %}" class="btn btn-outline btn-lg">← Back to Rooms</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

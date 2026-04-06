@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load booking_tags %}
+
+{% block title %}Book {{ room.name }} — LuxeStay{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header page-header-sm">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a> / <a href="{% url 'room_list' %}">Rooms</a> / <a href="{% url 'room_detail' room.id %}">{{ room.name }}</a> / <span>Book</span>
+        </nav>
+    </div>
+</section>
+
+<!-- Booking Form -->
+<section class="booking-section section" id="booking-section">
+    <div class="container">
+        <div class="booking-grid">
+            <!-- Form -->
+            <div class="booking-form-wrapper animate-fade-up">
+                <div class="glass-card booking-form-card">
+                    <h2>Complete Your <span class="text-gold">Reservation</span></h2>
+                    <p class="form-subtitle">Fill in your details to book {{ room.name }}.</p>
+
+                    {% if form.errors %}
+                    <div class="form-errors">
+                        {% for error in form.non_field_errors %}
+                        <p class="error-text">⚠️ {{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'book_room' room.id %}" id="booking-main-form">
+                        {% csrf_token %}
+
+                        <div class="form-group">
+                            <label for="booking-name">Full Name *</label>
+                            {{ form.guest_name }}
+                            {% if form.guest_name.errors %}<span class="field-error">{{ form.guest_name.errors.0 }}</span>{% endif %}
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="booking-email">Email Address *</label>
+                                {{ form.guest_email }}
+                                {% if form.guest_email.errors %}<span class="field-error">{{ form.guest_email.errors.0 }}</span>{% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="booking-phone">Phone Number *</label>
+                                {{ form.guest_phone }}
+                                {% if form.guest_phone.errors %}<span class="field-error">{{ form.guest_phone.errors.0 }}</span>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="booking-checkin">Check-in Date *</label>
+                                {{ form.check_in }}
+                                {% if form.check_in.errors %}<span class="field-error">{{ form.check_in.errors.0 }}</span>{% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="booking-checkout">Check-out Date *</label>
+                                {{ form.check_out }}
+                                {% if form.check_out.errors %}<span class="field-error">{{ form.check_out.errors.0 }}</span>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="booking-guests">Number of Guests * <small>(Max: {{ room.capacity }})</small></label>
+                            {{ form.num_guests }}
+                            {% if form.num_guests.errors %}<span class="field-error">{{ form.num_guests.errors.0 }}</span>{% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="booking-requests">Special Requests</label>
+                            {{ form.special_requests }}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg btn-block" id="confirm-booking-btn">
+                            Confirm Booking
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Room Summary Sidebar -->
+            <div class="booking-summary animate-fade-up delay-1">
+                <div class="glass-card summary-card">
+                    <h3>Booking Summary</h3>
+                    <div class="summary-room">
+                        {% if room.image %}
+                        <img src="{{ room.image.url }}" alt="{{ room.name }}">
+                        {% else %}
+                        <div class="room-placeholder room-placeholder-sm">
+                            <span>🏨</span>
+                        </div>
+                        {% endif %}
+                        <div>
+                            <h4>{{ room.name }}</h4>
+                            <p>{{ room.get_room_type_display }}</p>
+                        </div>
+                    </div>
+                    <div class="summary-details">
+                        <div class="summary-row">
+                            <span>Room Rate</span>
+                            <span>₹{{ room.price_per_night|floatformat:0 }} / night</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Max Capacity</span>
+                            <span>{{ room.capacity }} guests</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Room Size</span>
+                            <span>{{ room.size_sqft }} sq ft</span>
+                        </div>
+                        <div class="summary-row summary-total" id="summary-total">
+                            <span>Total</span>
+                            <span>Select dates to calculate</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Live price calculation
+    const pricePerNight = {{ room.price_per_night }};
+    const checkinInput = document.getElementById('booking-checkin');
+    const checkoutInput = document.getElementById('booking-checkout');
+    const totalDisplay = document.getElementById('summary-total');
+
+    function calculateTotal() {
+        const checkin = new Date(checkinInput.value);
+        const checkout = new Date(checkoutInput.value);
+        if (checkinInput.value && checkoutInput.value && checkout > checkin) {
+            const nights = Math.ceil((checkout - checkin) / (1000 * 60 * 60 * 24));
+            const total = nights * pricePerNight;
+            totalDisplay.innerHTML = `<span>Total (${nights} night${nights > 1 ? 's' : ''})</span><span class="text-gold">₹${total.toLocaleString('en-IN')}</span>`;
+        }
+    }
+
+    checkinInput.addEventListener('change', calculateTotal);
+    checkoutInput.addEventListener('change', calculateTotal);
+    calculateTotal();
+</script>
+{% endblock %}

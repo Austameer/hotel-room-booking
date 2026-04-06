@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load booking_tags %}
+
+{% block title %}Booking Confirmed — LuxeStay{% endblock %}
+
+{% block content %}
+<section class="confirmation-section section" id="confirmation-section">
+    <div class="container">
+        <div class="confirmation-card glass-card animate-fade-up">
+            <div class="confirmation-icon">✓</div>
+            <h1>Booking <span class="text-gold">Confirmed!</span></h1>
+            <p class="confirmation-subtitle">Thank you, {{ booking.guest_name }}! Your reservation has been confirmed.</p>
+
+            <div class="booking-ref-display">
+                <span class="ref-label">Booking Reference</span>
+                <span class="ref-code" id="booking-ref-code">{{ booking.booking_ref }}</span>
+            </div>
+
+            <div class="confirmation-details">
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Room</span>
+                        <span class="detail-value">{{ booking.room.name }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Room Type</span>
+                        <span class="detail-value">{{ booking.room.get_room_type_display }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Check In</span>
+                        <span class="detail-value">{{ booking.check_in|date:"d M Y" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Check Out</span>
+                        <span class="detail-value">{{ booking.check_out|date:"d M Y" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Duration</span>
+                        <span class="detail-value">{{ booking.num_nights }} night{{ booking.num_nights|pluralize }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Guests</span>
+                        <span class="detail-value">{{ booking.num_guests }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Email</span>
+                        <span class="detail-value">{{ booking.guest_email }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Phone</span>
+                        <span class="detail-value">{{ booking.guest_phone }}</span>
+                    </div>
+                </div>
+
+                <div class="confirmation-total">
+                    <span>Total Amount</span>
+                    <span class="total-amount">₹{{ booking.total_price|floatformat:0 }}</span>
+                </div>
+
+                {% if booking.special_requests %}
+                <div class="special-requests">
+                    <h4>Special Requests</h4>
+                    <p>{{ booking.special_requests }}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="confirmation-actions">
+                <a href="{% url 'home' %}" class="btn btn-primary">Back to Home</a>
+                <a href="{% url 'room_list' %}" class="btn btn-outline">Browse More Rooms</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

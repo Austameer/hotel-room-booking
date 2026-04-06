@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LuxeStay — Premium Hotel Booking{% endblock %}</title>
+    <meta name="description" content="{% block meta_desc %}Experience luxury at LuxeStay. Book premium hotel rooms with world-class amenities and exceptional service.{% endblock %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="main-navbar">
+        <div class="container nav-container">
+            <a href="{% url 'home' %}" class="nav-logo">
+                <span class="logo-icon">✦</span>
+                <span class="logo-text">LuxeStay</span>
+            </a>
+            <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+                <li><a href="{% url 'room_list' %}" class="nav-link {% if request.resolver_match.url_name == 'room_list' %}active{% endif %}">Rooms</a></li>
+                <li><a href="{% url 'contact' %}" class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contact</a></li>
+                <li><a href="{% url 'room_list' %}" class="nav-btn">Book Now</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}" id="alert-{{ forloop.counter }}">
+            <span>{{ message }}</span>
+            <button class="alert-close" onclick="this.parentElement.remove()">✕</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="{% url 'home' %}" class="footer-logo">
+                        <span class="logo-icon">✦</span> LuxeStay
+                    </a>
+                    <p class="footer-desc">Experience the pinnacle of luxury hospitality. Every stay is crafted to perfection.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'room_list' %}">Our Rooms</a></li>
+                        <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Room Types</h4>
+                    <ul>
+                        <li><a href="{% url 'room_list' %}?room_type=standard">Standard Rooms</a></li>
+                        <li><a href="{% url 'room_list' %}?room_type=deluxe">Deluxe Rooms</a></li>
+                        <li><a href="{% url 'room_list' %}?room_type=suite">Suites</a></li>
+                        <li><a href="{% url 'room_list' %}?room_type=penthouse">Penthouse</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li>📍 123 Luxury Avenue, Mumbai</li>
+                        <li>📞 +91 98765 43210</li>
+                        <li>✉️ reservations@luxestay.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 LuxeStay. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

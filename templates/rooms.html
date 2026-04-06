@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load booking_tags %}
+
+{% block title %}Our Rooms — LuxeStay{% endblock %}
+{% block meta_desc %}Browse our collection of premium hotel rooms. From standard comfort to penthouse luxury.{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <h1 class="page-title animate-fade-up">Our <span class="text-gold">Rooms</span></h1>
+        <p class="page-subtitle animate-fade-up delay-1">Discover the perfect room for your perfect stay</p>
+    </div>
+</section>
+
+<!-- Search/Filter Bar -->
+<section class="filter-section" id="filter-section">
+    <div class="container">
+        <form class="search-bar glass-card" action="{% url 'room_list' %}" method="get" id="filter-form">
+            <div class="search-field">
+                <label for="search-checkin">Check In</label>
+                {{ search_form.check_in }}
+            </div>
+            <div class="search-field">
+                <label for="search-checkout">Check Out</label>
+                {{ search_form.check_out }}
+            </div>
+            <div class="search-field">
+                <label for="search-guests">Guests</label>
+                {{ search_form.guests }}
+            </div>
+            <div class="search-field">
+                <label for="search-room-type">Room Type</label>
+                {{ search_form.room_type }}
+            </div>
+            <button type="submit" class="btn btn-primary search-btn" id="filter-submit">Filter</button>
+        </form>
+    </div>
+</section>
+
+<!-- Room Listing -->
+<section class="rooms-section section" id="rooms-listing">
+    <div class="container">
+        {% if rooms %}
+        <p class="results-count">{{ rooms|length }} room{{ rooms|length|pluralize }} found</p>
+        <div class="rooms-grid">
+            {% for room in rooms %}
+            <div class="room-card glass-card animate-on-scroll" id="room-card-{{ room.id }}">
+                <div class="room-card-image">
+                    {% if room.image %}
+                    <img src="{{ room.image.url }}" alt="{{ room.name }}" loading="lazy">
+                    {% else %}
+                    <div class="room-placeholder">
+                        <span>🏨</span>
+                    </div>
+                    {% endif %}
+                    <span class="room-badge">{{ room.get_room_type_display }}</span>
+                    {% if room.is_featured %}<span class="room-badge room-badge-featured">★ Featured</span>{% endif %}
+                </div>
+                <div class="room-card-body">
+                    <h3 class="room-card-title">{{ room.name }}</h3>
+                    <div class="room-card-meta">
+                        <span>👥 {{ room.capacity }} Guests</span>
+                        <span>📐 {{ room.size_sqft }} sq ft</span>
+                    </div>
+                    <p class="room-card-desc">{{ room.description|truncatewords:18 }}</p>
+                    <div class="room-amenities-preview">
+                        {% for amenity in room.get_amenities_list|slice:":3" %}
+                        <span class="amenity-tag">{{ amenity }}</span>
+                        {% endfor %}
+                        {% if room.get_amenities_list|length > 3 %}
+                        <span class="amenity-tag amenity-more">+{{ room.get_amenities_list|length|add:"-3" }} more</span>
+                        {% endif %}
+                    </div>
+                    <div class="room-card-footer">
+                        <div class="room-price">
+                            <span class="price-amount">₹{{ room.price_per_night|floatformat:0 }}</span>
+                            <span class="price-unit">/ night</span>
+                        </div>
+                        <div class="room-card-actions">
+                            <a href="{% url 'room_detail' room.id %}" class="btn btn-sm btn-outline">Details</a>
+                            <a href="{% url 'book_room' room.id %}{% if check_in and check_out %}?check_in={{ check_in|date:'Y-m-d' }}&check_out={{ check_out|date:'Y-m-d' }}{% endif %}" class="btn btn-sm btn-primary">Book</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state glass-card">
+            <div class="empty-icon">🔍</div>
+            <h3>No rooms found</h3>
+            <p>Try adjusting your search criteria or <a href="{% url 'room_list' %}">view all rooms</a>.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
