@@ -1,6 +1,6 @@
 from django import forms
 from django.utils import timezone
-from .models import Booking, ContactMessage
+from .models import Booking, ContactMessage, Review
 
 
 class SearchForm(forms.Form):
@@ -127,3 +127,49 @@ class ContactForm(forms.ModelForm):
                 'id': 'contact-message',
             }),
         }
+
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['guest_name', 'guest_email', 'rating', 'comment']
+        widgets = {
+            'guest_name': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'Your Name',
+                'id': 'review-name',
+            }),
+            'guest_email': forms.EmailInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'Your Email',
+                'id': 'review-email',
+            }),
+            'rating': forms.HiddenInput(attrs={
+                'id': 'review-rating-value',
+            }),
+            'comment': forms.Textarea(attrs={
+                'class': 'form-input',
+                'rows': 4,
+                'placeholder': 'Share your experience...',
+                'id': 'review-comment',
+            }),
+        }
+
+
+class BookingLookupForm(forms.Form):
+    booking_ref = forms.CharField(
+        max_length=12,
+        widget=forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'e.g. A1B2C3D4E5',
+            'id': 'lookup-ref',
+            'style': 'text-transform: uppercase; letter-spacing: 2px;',
+        })
+    )
+    guest_email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'Email used during booking',
+            'id': 'lookup-email',
+        })
+    )

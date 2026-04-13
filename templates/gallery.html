@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gallery — LuxeStay{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <p class="section-tag">Visual Tour</p>
+        <h1 class="page-title">Our <span class="text-gold">Gallery</span></h1>
+        <p class="page-subtitle">Take a visual journey through our stunning property and world-class facilities.</p>
+    </div>
+</section>
+
+<section class="gallery-section section" id="gallery-section">
+    <div class="container">
+        <!-- Category Tabs -->
+        <div class="gallery-tabs" id="gallery-tabs">
+            <button class="gallery-tab active" data-category="all">All</button>
+            {% for code, name in categories %}
+            <button class="gallery-tab" data-category="{{ code }}">{{ name }}</button>
+            {% endfor %}
+        </div>
+
+        <!-- Gallery Grid -->
+        <div class="gallery-grid" id="gallery-grid">
+            {% for image in images %}
+            <div class="gallery-item animate-on-scroll" data-category="{{ image.category }}">
+                <img src="{{ image.image_url }}" alt="{{ image.title }}" loading="lazy" onclick="openLightbox('{{ image.image_url }}', '{{ image.title }}')">
+                <div class="gallery-overlay">
+                    <span class="gallery-category">{{ image.get_category_display }}</span>
+                    <h4 class="gallery-title">{{ image.title }}</h4>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state glass-card" style="grid-column: 1/-1;">
+                <div class="empty-icon">📸</div>
+                <h3>Gallery Coming Soon</h3>
+                <p>We're preparing stunning visuals of our property for you.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Lightbox Modal -->
+<div class="lightbox-modal" id="lightbox-modal" onclick="closeLightbox(event)">
+    <button class="lightbox-close" onclick="closeLightbox()" id="lightbox-close">✕</button>
+    <img src="" alt="" class="lightbox-image" id="lightbox-image">
+    <p class="lightbox-caption" id="lightbox-caption"></p>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Gallery tab filtering
+    document.querySelectorAll('.gallery-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.gallery-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            const cat = tab.dataset.category;
+            document.querySelectorAll('.gallery-item').forEach(item => {
+                if (cat === 'all' || item.dataset.category === cat) {
+                    item.style.display = '';
+                    item.style.animation = 'fadeInUp 0.5s ease forwards';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Lightbox
+    function openLightbox(src, title) {
+        const modal = document.getElementById('lightbox-modal');
+        document.getElementById('lightbox-image').src = src;
+        document.getElementById('lightbox-caption').textContent = title;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox(e) {
+        if (e && e.target !== e.currentTarget && !e.target.classList.contains('lightbox-close')) return;
+        const modal = document.getElementById('lightbox-modal');
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeLightbox();
+    });
+</script>
+{% endblock %}

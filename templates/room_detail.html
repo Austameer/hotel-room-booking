@@ -35,6 +35,22 @@
             <div class="room-detail-info animate-fade-up delay-1">
                 <h1 class="room-detail-title">{{ room.name }}</h1>
 
+                {% if avg_rating %}
+                <div class="rating-summary">
+                    <div class="stars-display">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= avg_rating %}
+                                <span class="star filled">★</span>
+                            {% else %}
+                                <span class="star">★</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <span class="rating-text">{{ avg_rating }} / 5</span>
+                    <span class="review-count-text">({{ review_count }} review{{ review_count|pluralize }})</span>
+                </div>
+                {% endif %}
+
                 <div class="room-detail-meta">
                     <div class="meta-item">
                         <span class="meta-icon">👥</span>
@@ -72,6 +88,85 @@
                 <div class="room-detail-actions">
                     <a href="{% url 'book_room' room.id %}" class="btn btn-primary btn-lg" id="book-now-btn">Book This Room</a>
                     <a href="{% url 'room_list' %}" class="btn btn-outline btn-lg">← Back to Rooms</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Reviews Section -->
+<section class="reviews-section section" id="reviews-section">
+    <div class="container">
+        <div class="section-header">
+            <p class="section-tag">What Our Guests Say</p>
+            <h2 class="section-title">Guest <span class="text-gold">Reviews</span></h2>
+        </div>
+
+        <div class="reviews-layout">
+            <!-- Existing Reviews -->
+            <div class="reviews-list">
+                {% if reviews %}
+                    {% for review in reviews %}
+                    <div class="review-card glass-card animate-on-scroll" id="review-{{ review.id }}">
+                        <div class="review-header">
+                            <div class="review-avatar">{{ review.guest_name|first }}</div>
+                            <div class="review-meta">
+                                <h4 class="review-author">{{ review.guest_name }}</h4>
+                                <span class="review-date">{{ review.created_at|date:"M d, Y" }}</span>
+                            </div>
+                            <div class="review-stars">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= review.rating %}
+                                        <span class="star filled">★</span>
+                                    {% else %}
+                                        <span class="star">★</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <p class="review-comment">{{ review.comment }}</p>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state glass-card">
+                        <div class="empty-icon">💬</div>
+                        <h3>No Reviews Yet</h3>
+                        <p>Be the first to share your experience!</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Write a Review -->
+            <div class="review-form-wrapper">
+                <div class="glass-card review-form-card">
+                    <h3>Write a <span class="text-gold">Review</span></h3>
+                    <form method="post" action="{% url 'room_detail' room.id %}" id="review-form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="review-name">Your Name *</label>
+                            {{ review_form.guest_name }}
+                        </div>
+                        <div class="form-group">
+                            <label for="review-email">Email *</label>
+                            {{ review_form.guest_email }}
+                        </div>
+                        <div class="form-group">
+                            <label>Rating *</label>
+                            <div class="star-picker" id="star-picker">
+                                <span class="pick-star" data-value="1">★</span>
+                                <span class="pick-star" data-value="2">★</span>
+                                <span class="pick-star" data-value="3">★</span>
+                                <span class="pick-star" data-value="4">★</span>
+                                <span class="pick-star" data-value="5">★</span>
+                            </div>
+                            {{ review_form.rating }}
+                        </div>
+                        <div class="form-group">
+                            <label for="review-comment">Your Review *</label>
+                            {{ review_form.comment }}
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block" id="submit-review-btn">Submit Review</button>
+                    </form>
                 </div>
             </div>
         </div>

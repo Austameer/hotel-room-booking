@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Room, Booking, ContactMessage
+from .models import Room, Booking, ContactMessage, Review, Offer, GalleryImage
 
 
 @admin.register(Room)
@@ -25,3 +25,27 @@ class ContactMessageAdmin(admin.ModelAdmin):
     list_filter = ('created_at',)
     search_fields = ('name', 'email', 'subject', 'message')
     readonly_fields = ('created_at',)
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ('guest_name', 'room', 'rating', 'created_at')
+    list_filter = ('rating', 'room', 'created_at')
+    search_fields = ('guest_name', 'guest_email', 'comment')
+    readonly_fields = ('created_at',)
+
+
+@admin.register(Offer)
+class OfferAdmin(admin.ModelAdmin):
+    list_display = ('title', 'discount_percent', 'promo_code', 'valid_from', 'valid_to', 'is_active')
+    list_filter = ('is_active', 'room_type')
+    search_fields = ('title', 'promo_code')
+    list_editable = ('is_active',)
+
+
+@admin.register(GalleryImage)
+class GalleryImageAdmin(admin.ModelAdmin):
+    list_display = ('title', 'category', 'ordering', 'created_at')
+    list_filter = ('category',)
+    search_fields = ('title',)
+    list_editable = ('ordering', 'category')

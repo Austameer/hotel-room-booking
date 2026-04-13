@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Special Offers — LuxeStay{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <p class="section-tag">Limited Time</p>
+        <h1 class="page-title">Special <span class="text-gold">Offers</span></h1>
+        <p class="page-subtitle">Exclusive deals and promotions to make your luxury stay even more rewarding.</p>
+    </div>
+</section>
+
+<section class="offers-section section" id="offers-section">
+    <div class="container">
+        <div class="offers-grid">
+            {% for offer in offers %}
+            <div class="offer-card glass-card animate-on-scroll" id="offer-{{ offer.id }}">
+                <div class="offer-badge">{{ offer.discount_percent }}% OFF</div>
+                <div class="offer-content">
+                    <h3 class="offer-title">{{ offer.title }}</h3>
+                    <p class="offer-desc">{{ offer.description }}</p>
+
+                    {% if offer.room_type %}
+                    <div class="offer-type">
+                        <span>Applies to:</span>
+                        <span class="offer-type-badge">{{ offer.get_room_type_display }}</span>
+                    </div>
+                    {% else %}
+                    <div class="offer-type">
+                        <span>Applies to:</span>
+                        <span class="offer-type-badge">All Room Types</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="offer-promo">
+                        <span class="promo-label">Promo Code</span>
+                        <span class="promo-code" id="promo-{{ offer.id }}">{{ offer.promo_code }}</span>
+                        <button class="btn btn-sm btn-outline copy-btn" onclick="copyPromo('{{ offer.promo_code }}', this)">Copy</button>
+                    </div>
+
+                    <div class="offer-countdown" data-expires="{{ offer.valid_to|date:'c' }}">
+                        <span class="countdown-label">⏰ Offer ends in:</span>
+                        <div class="countdown-timer">
+                            <div class="countdown-unit">
+                                <span class="countdown-number days">00</span>
+                                <span class="countdown-text">Days</span>
+                            </div>
+                            <div class="countdown-unit">
+                                <span class="countdown-number hours">00</span>
+                                <span class="countdown-text">Hours</span>
+                            </div>
+                            <div class="countdown-unit">
+                                <span class="countdown-number minutes">00</span>
+                                <span class="countdown-text">Min</span>
+                            </div>
+                            <div class="countdown-unit">
+                                <span class="countdown-number seconds">00</span>
+                                <span class="countdown-text">Sec</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'room_list' %}" class="btn btn-primary btn-block">Book Now & Save</a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state glass-card" style="grid-column: 1/-1;">
+                <div class="empty-icon">🎉</div>
+                <h3>No Active Offers</h3>
+                <p>Check back soon for exclusive deals and promotions!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Countdown timers
+    document.querySelectorAll('.offer-countdown').forEach(countdown => {
+        const expires = new Date(countdown.dataset.expires).getTime();
+        const days = countdown.querySelector('.days');
+        const hours = countdown.querySelector('.hours');
+        const minutes = countdown.querySelector('.minutes');
+        const seconds = countdown.querySelector('.seconds');
+
+        setInterval(() => {
+            const now = new Date().getTime();
+            const diff = expires - now;
+            if (diff <= 0) {
+                countdown.innerHTML = '<span class="countdown-expired">Offer Expired</span>';
+                return;
+            }
+            days.textContent = String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(2, '0');
+            hours.textContent = String(Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+            minutes.textContent = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+            seconds.textContent = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
+        }, 1000);
+    });
+
+    // Copy promo code
+    function copyPromo(code, btn) {
+        navigator.clipboard.writeText(code).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.textContent = 'Copy';
+                btn.classList.remove('copied');
+            }, 2000);
+        });
+    }
+</script>
+{% endblock %}

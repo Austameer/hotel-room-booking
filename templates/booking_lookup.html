@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Booking — LuxeStay{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header page-header-sm">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a> / <span>My Booking</span>
+        </nav>
+    </div>
+</section>
+
+<section class="lookup-section section" id="lookup-section">
+    <div class="container">
+        <div class="lookup-layout">
+            <!-- Lookup Form -->
+            <div class="lookup-form-wrapper animate-fade-up">
+                <div class="glass-card lookup-form-card">
+                    <div class="lookup-icon">🔍</div>
+                    <h2>Find Your <span class="text-gold">Booking</span></h2>
+                    <p class="form-subtitle">Enter your booking reference and email to view your reservation details.</p>
+
+                    {% if not_found %}
+                    <div class="form-errors">
+                        <p class="error-text">⚠️ No booking found with the provided reference and email. Please check your details and try again.</p>
+                    </div>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'booking_lookup' %}" id="lookup-form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="lookup-ref">Booking Reference *</label>
+                            {{ form.booking_ref }}
+                        </div>
+                        <div class="form-group">
+                            <label for="lookup-email">Email Address *</label>
+                            {{ form.guest_email }}
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block btn-lg" id="lookup-submit">Find My Booking</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Booking Result -->
+            {% if booking %}
+            <div class="lookup-result animate-fade-up delay-1">
+                <div class="glass-card lookup-result-card">
+                    <div class="booking-status-badge status-{{ booking.status }}">
+                        {% if booking.status == 'confirmed' %}✅{% elif booking.status == 'pending' %}⏳{% elif booking.status == 'cancelled' %}❌{% else %}✔️{% endif %}
+                        {{ booking.get_status_display }}
+                    </div>
+
+                    <h3>Booking <span class="text-gold">{{ booking.booking_ref }}</span></h3>
+
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Guest Name</span>
+                            <span class="detail-value">{{ booking.guest_name }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Room</span>
+                            <span class="detail-value">{{ booking.room.name }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Check-in</span>
+                            <span class="detail-value">{{ booking.check_in|date:"M d, Y" }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Check-out</span>
+                            <span class="detail-value">{{ booking.check_out|date:"M d, Y" }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Guests</span>
+                            <span class="detail-value">{{ booking.num_guests }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Nights</span>
+                            <span class="detail-value">{{ booking.num_nights }}</span>
+                        </div>
+                    </div>
+
+                    <div class="confirmation-total">
+                        <span>Total Paid</span>
+                        <span class="total-amount">₹{{ booking.total_price|floatformat:0 }}</span>
+                    </div>
+
+                    {% if booking.special_requests %}
+                    <div class="special-requests">
+                        <h4>Special Requests</h4>
+                        <p>{{ booking.special_requests }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if booking.status == 'confirmed' or booking.status == 'pending' %}
+                    <div class="cancel-section">
+                        <p class="cancel-warning">⚠️ Cancelling is permanent and cannot be undone.</p>
+                        <form method="post" action="{% url 'cancel_booking' booking.booking_ref %}" id="cancel-form" onsubmit="return confirm('Are you sure you want to cancel this booking? This action cannot be undone.');">
+                            {% csrf_token %}
+                            <input type="hidden" name="guest_email" value="{{ booking.guest_email }}">
+                            <button type="submit" class="btn btn-danger btn-block" id="cancel-booking-btn">Cancel Booking</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

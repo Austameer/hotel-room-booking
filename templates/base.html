@@ -26,7 +26,11 @@
             <ul class="nav-links" id="nav-links">
                 <li><a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
                 <li><a href="{% url 'room_list' %}" class="nav-link {% if request.resolver_match.url_name == 'room_list' %}active{% endif %}">Rooms</a></li>
+                <li><a href="{% url 'gallery' %}" class="nav-link {% if request.resolver_match.url_name == 'gallery' %}active{% endif %}">Gallery</a></li>
+                <li><a href="{% url 'offers' %}" class="nav-link {% if request.resolver_match.url_name == 'offers' %}active{% endif %}">Offers</a></li>
+                <li><a href="{% url 'faq' %}" class="nav-link {% if request.resolver_match.url_name == 'faq' %}active{% endif %}">FAQ</a></li>
                 <li><a href="{% url 'contact' %}" class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contact</a></li>
+                <li><a href="{% url 'booking_lookup' %}" class="nav-link {% if request.resolver_match.url_name == 'booking_lookup' %}active{% endif %}">My Booking</a></li>
                 <li><a href="{% url 'room_list' %}" class="nav-btn">Book Now</a></li>
             </ul>
         </div>

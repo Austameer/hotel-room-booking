@@ -94,3 +94,69 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"{self.subject} - {self.name}"
+
+
+class Review(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='reviews')
+    guest_name = models.CharField(max_length=200)
+    guest_email = models.EmailField()
+    rating = models.IntegerField(choices=[(i, f'{i} Star{"s" if i > 1 else ""}') for i in range(1, 6)])
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.guest_name} — {self.rating}★ for {self.room.name}"
+
+
+class Offer(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    discount_percent = models.IntegerField()
+    promo_code = models.CharField(max_length=30, unique=True)
+    valid_from = models.DateTimeField()
+    valid_to = models.DateTimeField()
+    room_type = models.CharField(
+        max_length=20,
+        choices=Room.ROOM_TYPES,
+        blank=True,
+        null=True,
+        help_text="Leave blank for all room types",
+    )
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['valid_to']
+
+    def __str__(self):
+        return f"{self.title} ({self.discount_percent}% off)"
+
+    @property
+    def is_valid(self):
+        now = timezone.now()
+        return self.is_active and self.valid_from <= now <= self.valid_to
+
+
+class GalleryImage(models.Model):
+    CATEGORY_CHOICES = [
+        ('rooms', 'Rooms'),
+        ('dining', 'Dining'),
+        ('pool', 'Pool & Spa'),
+        ('lobby', 'Lobby'),
+        ('exterior', 'Exterior'),
+    ]
+
+    title = models.CharField(max_length=200)
+    image_url = models.URLField(help_text="URL to image (use Unsplash, Pexels, etc.)")
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='rooms')
+    ordering = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['ordering', '-created_at']
+
+    def __str__(self):
+        return f"{self.title} ({self.get_category_display()})"

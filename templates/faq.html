@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}FAQ — LuxeStay{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <p class="section-tag">Help Center</p>
+        <h1 class="page-title">Frequently Asked <span class="text-gold">Questions</span></h1>
+        <p class="page-subtitle">Find answers to common questions about your stay at LuxeStay.</p>
+    </div>
+</section>
+
+<section class="faq-section section" id="faq-section">
+    <div class="container">
+        <!-- Search -->
+        <div class="faq-search-wrapper animate-fade-up">
+            <div class="faq-search glass-card">
+                <span class="faq-search-icon">🔍</span>
+                <input type="text" class="form-input faq-search-input" id="faq-search" placeholder="Search for answers..." autocomplete="off">
+            </div>
+        </div>
+        <div class="faq-no-results" id="faq-no-results" style="display: none;">
+            <div class="empty-state glass-card">
+                <div class="empty-icon">🤷</div>
+                <h3>No Matching Questions</h3>
+                <p>Try a different search term or <a href="{% url 'contact' %}">contact us</a> for help.</p>
+            </div>
+        </div>
+
+        <!-- FAQ Categories -->
+        {% for category in faq_categories %}
+        <div class="faq-category animate-on-scroll" data-faq-category="{{ category.category }}">
+            <h2 class="faq-category-title">
+                {% if category.category == 'Booking' %}📋{% elif category.category == 'Payment' %}💳{% elif category.category == 'Cancellation' %}🔄{% elif category.category == 'Amenities' %}🏨{% else %}ℹ️{% endif %}
+                {{ category.category }}
+            </h2>
+            <div class="faq-list">
+                {% for item in category.items %}
+                <div class="faq-item glass-card" data-question="{{ item.q|lower }}" data-answer="{{ item.a|lower }}">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>{{ item.q }}</span>
+                        <span class="faq-toggle-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>{{ item.a }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Contact CTA -->
+        <div class="faq-cta animate-on-scroll">
+            <div class="cta-card glass-card">
+                <h2>Still Have <span class="text-gold">Questions</span>?</h2>
+                <p>Our team is here to help you with anything you need.</p>
+                <a href="{% url 'contact' %}" class="btn btn-primary btn-lg">Contact Us</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // FAQ Accordion
+    function toggleFaq(btn) {
+        const item = btn.closest('.faq-item');
+        const wasActive = item.classList.contains('active');
+        // Close all siblings
+        item.closest('.faq-list').querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+        if (!wasActive) item.classList.add('active');
+    }
+
+    // FAQ Search
+    const faqSearch = document.getElementById('faq-search');
+    const noResults = document.getElementById('faq-no-results');
+
+    faqSearch.addEventListener('input', () => {
+        const query = faqSearch.value.toLowerCase().trim();
+        let totalVisible = 0;
+
+        document.querySelectorAll('.faq-category').forEach(cat => {
+            let catVisible = 0;
+            cat.querySelectorAll('.faq-item').forEach(item => {
+                const q = item.dataset.question;
+                const a = item.dataset.answer;
+                if (!query || q.includes(query) || a.includes(query)) {
+                    item.style.display = '';
+                    catVisible++;
+                    totalVisible++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            cat.style.display = catVisible > 0 ? '' : 'none';
+        });
+
+        noResults.style.display = totalVisible === 0 && query ? '' : 'none';
+    });
+</script>
+{% endblock %}

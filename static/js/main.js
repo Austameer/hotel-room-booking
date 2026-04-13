@@ -123,4 +123,47 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 5000);
     });
 
+    // ---- Star Rating Picker ----
+    const starPicker = document.getElementById('star-picker');
+    if (starPicker) {
+        const stars = starPicker.querySelectorAll('.pick-star');
+        const ratingInput = document.getElementById('review-rating-value');
+
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const value = parseInt(star.dataset.value);
+                ratingInput.value = value;
+                stars.forEach(s => {
+                    if (parseInt(s.dataset.value) <= value) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+            });
+
+            star.addEventListener('mouseenter', () => {
+                const value = parseInt(star.dataset.value);
+                stars.forEach(s => {
+                    if (parseInt(s.dataset.value) <= value) {
+                        s.style.color = 'var(--gold)';
+                        s.style.textShadow = '0 0 12px rgba(212, 168, 83, 0.6)';
+                    } else {
+                        s.style.color = '';
+                        s.style.textShadow = '';
+                    }
+                });
+            });
+
+            star.addEventListener('mouseleave', () => {
+                stars.forEach(s => {
+                    if (!s.classList.contains('active')) {
+                        s.style.color = '';
+                        s.style.textShadow = '';
+                    }
+                });
+            });
+        });
+    }
+
 });
