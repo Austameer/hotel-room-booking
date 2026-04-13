@@ -54,10 +54,25 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'hotel_project.wsgi.application'
 
+# On Vercel, the filesystem is read-only except for /tmp
+# We copy the DB there and use it from /tmp
+import shutil
+
+_LOCAL_DB = BASE_DIR / 'db.sqlite3'
+_VERCEL_DB = '/tmp/db.sqlite3'
+
+if os.environ.get('VERCEL'):
+    # Copy bundled DB to /tmp if it doesn't exist yet
+    if _LOCAL_DB.exists() and not os.path.exists(_VERCEL_DB):
+        shutil.copy2(str(_LOCAL_DB), _VERCEL_DB)
+    DB_PATH = _VERCEL_DB
+else:
+    DB_PATH = _LOCAL_DB
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': DB_PATH,
     }
 }
 
