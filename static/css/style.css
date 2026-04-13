@@ -287,7 +287,9 @@ h1, h2, h3, h4 {
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    background: linear-gradient(135deg, #0a0a1a 0%, #111128 30%, #1a1040 60%, #0d0d25 100%);
+    background: linear-gradient(-45deg, #0a0a1a, #111128, #1a1040, #0d0d25, #2a2a60);
+    background-size: 400% 400%;
+    animation: gradientBackground 15s ease infinite;
 }
 
 .hero-overlay {
@@ -1447,4 +1449,95 @@ select.form-input option {
     .contact-cards {
         grid-template-columns: 1fr;
     }
+}
+
+/* ==========================================
+   Dynamic & Vibrant Overrrides (Added)
+   ========================================== */
+
+/* Animated Gradients */
+@keyframes gradientBackground {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Glow Pulses */
+@keyframes glowPulse {
+    0% { box-shadow: 0 0 5px rgba(212, 168, 83, 0.2); }
+    50% { box-shadow: 0 0 25px rgba(212, 168, 83, 0.8), 0 0 40px rgba(212, 168, 83, 0.4); }
+    100% { box-shadow: 0 0 5px rgba(212, 168, 83, 0.2); }
+}
+
+/* Float Animation */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+/* Feature cards and Buttons Overrides */
+.btn-primary {
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--gold-light);
+    z-index: -2;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background-color: var(--gold-dark);
+    transition: all .3s;
+    z-index: -1;
+}
+
+.btn-primary:hover::before {
+    width: 100%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px) scale(1.05);
+    animation: glowPulse 2s infinite;
+}
+
+/* Room Cards Overrides for extreme dynamism */
+.room-card, .glass-card {
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+}
+
+.room-card:hover, .glass-card:hover {
+    transform: translateY(-12px) scale(1.03);
+    box-shadow: 0 20px 40px rgba(212, 168, 83, 0.25), 0 0 20px rgba(99, 102, 241, 0.2);
+    border-color: rgba(212, 168, 83, 0.5);
+    z-index: 10;
+}
+
+.animate-fade-up {
+    animation: float 6s ease-in-out infinite;
+}
+
+.room-badge {
+    animation: glowPulse 3s infinite;
+}
+
+/* Vibrant Navbar */
+.navbar.scrolled {
+    background: rgba(10, 10, 26, 0.85);
+    border-bottom: 1px solid rgba(212, 168, 83, 0.2);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
 }

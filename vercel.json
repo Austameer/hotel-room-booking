@@ -1,14 +1,14 @@
 {
     "name": "hotel-room-booking",
     "builds": [{
-        "src": "hotel_project/wsgi.py",
+        "src": "index.py",
         "use": "@vercel/python",
         "config": { "maxLambdaSize": "15mb" }
     }],
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "hotel_project/wsgi.py"
+            "dest": "index.py"
         }
     ]
 }
